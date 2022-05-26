@@ -170,3 +170,51 @@ done
 #remove sam files
 rm *sam
 ~~~
+
+Raw count statistics for both unfiltered and filtered BAMs were merged into three different tab-separeted-value files, one for mapping unfiltered reads, one for unmapping unfiltered reads and one for filtered reads. The Unix <code>join</code> command was use to this purpose.
+
+~~~
+#the code hereafter refers to filtered read-count files; it was then ap-plied to the other raw count statistics as well
+#
+#remove the last line of raw count file (which reports the total amount of unmapped reads) and then sort it
+for i in ERR29291*; do sed '$d' "$i" | sort > "$i"_sorted; done
+
+#join files two by two
+join -j 1 -o 1.1,1.3,2.3 ERR2929117_rawmapping_stats_filtered.tsv_sorted ERR2929119_rawmapping_stats_filtered.tsv_sorted > 1719_joined.tmp
+join -j 1 -o 1.1,1.2,1.3,2.3 1719_joined.tmp ERR2929120_rawmapping_stats_filtered.tsv_sorted > 171920_joined.tmp
+join -j 1 -o 1.1,1.2,1.3,1.4,2.3 171920_joined.tmp ERR2929122_rawmapping_stats_filtered.tsv_sorted > 17192022_joined.tmp
+join -j 1 -o 1.1,1.2,1.3,1.4,1.5,2.3 17192022_joined.tmp ERR2929124_rawmapping_stats_filtered.tsv_sorted > 1719202224_joined.tmp
+join -j 1 -o 1.1,1.2,1.3,1.4,1.5,1.6,2.3 1719202224_joined.tmp ERR2929126_rawmapping_stats_filtered.tsv_sorted > all_rawcounts_filtered.txt
+
+rm *tmp
+~~~
+
+### Transcriptome GO annotation
+The obtained reference transcriptome was scanned in order to get open reading frames (ORFs), which were subsequently used to get a gene ontology (GO) annotation. ORFs encoding at least 100 amino acids were first extracted using a Bioconda installation of **[TransDecod-er.LongOrfs v5.5.0](https://github.com/TransDecoder/TransDecoder/wiki)** and then annotated using a Bioconda installation of **Diamond v2.0.8.146** (Buchfink et al., 2015) against the UniProt database (accessed on 07/06/2021). The e-value threshold for the Diamond search was set to 10–5 (<code>--evalue 1e-05</code>) and just the best hit for every query sequence was kept (<code>--max-target-seqs 1</code>). The likely coding regions of ORFs were then predicted using <code>TransDecoder.Predict</code> and integrating the Diamond homology inference.
+
+~~~
+#get ORFs from reference transcriptome
+TransDecoder.LongOrfs -t 01_dgal_ref_rn_oneline_rd.fna
+
+#annotate ORFs with diamond
+diamond blastp --query 01_dgal_ref_rn_oneline_rd.fna.transdecoder_dir/longest_orfs.pep --db /var/local/uniprot/uniprot_sprot.fasta-norep_per_diamond.dmnd --evalue 1e-05 --max-target-seqs 1 --threads 10 --outfmt 6 --out 02_dgal_diamond_uniprot_annotation.tsv
+
+#predict coding regions
+TransDecoder.Predict -t 01_dgal_ref_rn_oneline_rd.fna --retain_blastp_hits 02_dgal_diamond_uniprot_annotation.tsv
+
+#onelinerize predicted protein fasta file
+cat 01_dgal_ref_rn_oneline_rd.fna.transdecoder.pep | awk '/^>/ {printf("\n%s\n",$0);next;} {printf("%s",$0);}  END {printf("\n");}' | tail -n +2 > 01_dgal_ref_rn_oneline_rd.fna.transdecoder_oneline.pep
+
+#customize fasta entries to keep only geneID
+sed -Ei '/^>/ s/ .+$//' 01_dgal_ref_rn_oneline_rd.fna.transdecoder_oneline.pep
+~~~
+
+The obtained predicted proteome was then used to perform a GO annotation on the web application [PANNZER2](http://ekhidna2.biocenter.helsinki.fi/sanspanz/) with the Argot scoring function (Törönen et al., 2018).
+
+### Differential expression analysis
+The differential expression analysis was performed with the R package **NOIseq v2.36.0** (Tarazona et al., 2015). The dataset was first filtered using the built-in function <code>filtered.data</code> to keep only reads with a count-per-million (CPM) greater than 10 and with a cutoff for the variation coefficient of 100. False discovery rate (FDR) was used as the method for the multiple test correction. Data quality was checked both before and after filtering using the built-in function
+<code>explo.plot</code> to plot saturation values and raw count distributions among samples.
+Data were then normalized using the between-sample Trimmed Mean of M-values (TMM) method implemented in the built-in function <code>tmm</code>. No length correction was applied.
+The differential expression analysis itself was afterward performed using the built-in function <code>noiseqbio</code>; null values were replaced with 0.1. Differentially expressed features were then re-covered using the built-in function <code>degenes</code> with a q-value of 0.95; all differentially expressed features were returned. Differential expression results were then visualized using the built-in function <code>DE.plot</code>.
+
+Genes found to be differentially expressed were then analysed to check whether they show an enrichment in some functional annotation. The R package **topGO v2.44** (Alexa & Rahnenfuhrer, 2021) was therefore run using the PANNZER2 functional annotation of the refer-ence proteome and the NOIseq results. FDRs for every differently expressed gene were used as gene scores to perform the Kolmogorov-Smirnov test statistics. Furthermore, each GO category was tested independently. The final set of best enriched GO terms was selected for every GO major class on the basis of FDR < 0.05 by visually checking the results. Eventually, the results of the GO enrichment analyses were visualized using the web application **[REVIGO](http://revigo.irb.hr/)** (Supek et al., 2011) against the whole UniProt database with an allowed similarity of 0.7.

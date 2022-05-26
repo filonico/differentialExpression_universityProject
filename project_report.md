@@ -5,3 +5,20 @@ Besides genomics and ecotoxicology, water fleas have become also good models to 
 
 In this work, a differential expression analysis of one clone of *Daphnia galeata* were performed in order to address the genetic response and basis of this water flea species to the exposure of fish kairomones. *Daphnia galeata* shows in fact life history trait (such as the age at first reproduction, the somatic growth rate and the body length) variations in populations grown up in the presence of fish kairomones, but not severe morphological changes (Tams et al., 2018, 2020).
 
+## Materials and Methods
+### Data collection
+Total RNA were extracted from pools of 20 egg-bearing adults of *Daphnia galeata* and sequencing was thereafter performed for 12 samples, assuring three replicates per genotype (M6 and M9) per condition of growth (control environment and kairomone-rich environment; Table 1).
+| RUN ACCESSION NUMBER |	GENOTYPE |	CONDITION OF GROWTH |	ID |
+|:--------------------:|:---------:|:--------------------:|:--:|
+|ERR2929116     	     |M9         |Control               |M9_C|
+|ERR2929117*           |M6         |Control	              |M6_C|
+|ERR2929118            |M9         |Control	              |M9_C|
+|ERR2929119*	         |M6         |Control	              |M6_C|
+|ERR2929120*	         |M6         |Control	              |M6_C|
+|ERR2929121	           |M9	       |Control	              |M9_C|
+|ERR2929122*	         |M6	       |Kairomone	            |M6_F|
+|ERR2929123	           |M9	       |Kairomone	            |M9_F|
+|ERR2929124*	         |M6	       |Kairomone	            |M6_F|
+|ERR2929125	           |M9	       |Kairomone	            |M9_F|
+|ERR2929126*	         |M6	       |Kairomone	            |M6_F|
+|ERR2929127	           |M9	       |Kairomone	            |M9_F|

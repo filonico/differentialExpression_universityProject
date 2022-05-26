@@ -91,7 +91,7 @@ bash random_subsampling_PE.sh all_1_trim.fastq all_2_trim.fastq 33607084
 Trinity --seqType fq --left all_1_trim.fastq --right all_2_trim.fastq --CPU 10 \   --max_memory 30G
 ~~~
 
-The <code>random_subsampling_PE.sh</code> bash script can be accessed [here](random_subsampling_PE.sh).
+The <code>random_subsampling_PE.sh</code> bash script can be accessed [here](scripts/random_subsampling_PE.sh).
 
 ### Assembly completeness and quality assessment
 Trinity output FASTA was onelinerized and then manipulated in order to obtain headers in the form of <code>>Dgal_trinityID</code>. The following command lines were run:
@@ -101,7 +101,7 @@ Trinity output FASTA was onelinerized and then manipulated in order to obtain he
 sed -E 's/ len.+$//; s/_/./g; s/^>/>Dgal_/' dgal_ref.fna > dgal_ref_rn.fna
 
 #onelinerize FASTA
-cat dgal_ref.rn.fna | awk '/^>/ {printf("\n%s\n",$0);next;} {printf("%s",$0);}  \ END {printf("\n");}' | tail -n +2 > dgal_ref.rn.oneline.fna
+cat dgal_ref.rn.fna | awk '/^>/ {printf("\n%s\n",$0);next;} {printf("%s",$0);} END {printf("\n");}' | tail -n +2 > dgal_ref.rn.oneline.fna
 ~~~
 
 Trinity de-novo assembly quality ad completeness was checked using **BUSCO v5** (Seppey et al., 2019) on the web application **gVolante2** (Nishimura et al., 2019). ‘arthropoda_odb10’ was used as the reference ortholog set and the sequence type was set to ‘coding/transcribed (nucleotide)’.

@@ -217,4 +217,8 @@ The differential expression analysis was performed with the R package **NOIseq v
 Data were then normalized using the between-sample Trimmed Mean of M-values (TMM) method implemented in the built-in function <code>tmm</code>. No length correction was applied.
 The differential expression analysis itself was afterward performed using the built-in function <code>noiseqbio</code>; null values were replaced with 0.1. Differentially expressed features were then re-covered using the built-in function <code>degenes</code> with a q-value of 0.95; all differentially expressed features were returned. Differential expression results were then visualized using the built-in function <code>DE.plot</code>.
 
+The R code used to perform the differential expression analysis can be found [here](scripts/diffExpr.analysis.R).
+
 Genes found to be differentially expressed were then analysed to check whether they show an enrichment in some functional annotation. The R package **topGO v2.44** (Alexa & Rahnenfuhrer, 2021) was therefore run using the PANNZER2 functional annotation of the refer-ence proteome and the NOIseq results. FDRs for every differently expressed gene were used as gene scores to perform the Kolmogorov-Smirnov test statistics. Furthermore, each GO category was tested independently. The final set of best enriched GO terms was selected for every GO major class on the basis of FDR < 0.05 by visually checking the results. Eventually, the results of the GO enrichment analyses were visualized using the web application **[REVIGO](http://revigo.irb.hr/)** (Supek et al., 2011) against the whole UniProt database with an allowed similarity of 0.7.
+
+The R code used to perform the Go enrichment analysis can be found [here](scripts/GOenrichment.R).

@@ -128,7 +128,7 @@ done
 The resulting Sequence Alignment/Map (SAM) files were soon after converted into the less disk-space demanding Binary Alignment/Map (BAM) format using a Bioconda installation of **Mtools v1.3**Li et al., 2009). BAM files were then sorted and filtered to keep only (i) proper paired mapping reads (<code>-f 0x2</code>) and (ii) reads with a minimum mapping quality of 30 (<code>-q 30</code>); conversely, the filtering excluded (iii) secondary alignments (<code>-F 0x200</code>). Raw count statistics were retrieved for both raw mapping reads and filtered mapping reads. The process was automated as following:
 
 ~~~
-#convert sam to bam, then sort, index and filter bam files. NB: the current di-rectory tree is as follow:
+#convert sam to bam, then sort, index and filter bam files. NB: the current directory tree is as follow:
 #mapping/
 #├── 01_dgal_ref_rn_oneline_rd.fna
 #├── 02_raw_mapping

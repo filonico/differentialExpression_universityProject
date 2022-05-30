@@ -1,0 +1,3 @@
+all mapping	343219541
+all unmapping	5237449
+filtered mapping	269526372
